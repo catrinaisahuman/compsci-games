@@ -39,6 +39,10 @@ function draw(){
 	if(gameRuning == false){
 		gameOver()
 	}
+
+	if(keyWentDown('r') == true && gameRuning == false){
+		reset();
+	}
 }
 
 
@@ -114,9 +118,11 @@ window.setInterval(function(){
 function gameOver(){
 	textSize(70)
 	textAlign(CENTER, CENTER)
-	text('Game Over', 400, 250)
+	text('Game Over', 400, 225)
 	textSize(50)
-	text('Score: ' + score, 400, 300)
+	text('Score: ' + score, 400, 280)
+	textSize(30)
+	text('Press r to reset', 400, 325)
 }
 
 function nextLevel(){
@@ -131,4 +137,14 @@ function nextLevel(){
 		bigArea.mouseActive = true;
 		smallArea.mouseActive = true;		
 	}
+}
+
+function reset(){
+	gameRuning = true;
+	time = 30
+	level = 1
+	barWidth = 50
+	speed = 0.1
+	score = 0
+	lastLevelScore = 0
 }
