@@ -5,16 +5,21 @@ platDist = 0
 posX = 50.00
 oldPos = 0
 
+maxHeight = 400
+minHeight = 10
+maxDist = 600
+minDist = 250
+
 function setup(){
 	createCanvas(800, 600);
 	platforms = new Group
 	player = createSprite(25, 25, 50, 50)
 
 	for(i=0;i<20;i++){
-		height = random(10, 400)
+		height = random(minHeight, maxHeight)
 		posX += platDist
 		platform = createSprite(posX, 600 - height/2, 100, height)
-		platDist = random(150, 300)
+		platDist = random(minDist, maxDist)
 		platform.immovable = true
 		platforms.add(platform)
 	}
@@ -59,10 +64,10 @@ function update(){
 }
 
 function changePlatform(i){
-	heightA = random(10, 400)
-	platDist = random(150, 300)
+	heightA = random(minHeight, maxHeight)
+	platDist = random(minDist, maxDist)
 	platforms[i].height = heightA
 	posX += platDist
 	platforms[i].position.x = posX
-	platforms[i].position.y = 600 - height/2
+	platforms[i].position.y = 600 - heightA/2
 }
