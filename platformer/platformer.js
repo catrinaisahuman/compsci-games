@@ -1,24 +1,26 @@
 gravity = 0.5
 friction = 0.9
-maxVel = 20
+maxVel = 15
 platDist = 0
 posX = 50.00
 oldPos = 0
 
-maxHeight = 400
-minHeight = 10
-maxDist = 600
-minDist = 250
+maxHeight = 200
+minHeight = 20
+platWidth = 70
+maxDist = 250
+minDist = 150
+playerSpeed = 1
 
 function setup(){
-	createCanvas(800, 600);
+	createCanvas(1080, 720);
 	platforms = new Group
-	player = createSprite(25, 25, 50, 50)
+	player = createSprite(50, 25, 25, 25)
 
 	for(i=0;i<20;i++){
-		height = random(minHeight, maxHeight)
+		heightA = random(minHeight, maxHeight)
 		posX += platDist
-		platform = createSprite(posX, 600 - height/2, 100, height)
+		platform = createSprite(posX, height - heightA/2, platWidth, heightA)
 		platDist = random(minDist, maxDist)
 		platform.immovable = true
 		platforms.add(platform)
@@ -29,9 +31,9 @@ function setup(){
 function draw(){
 	background(220)
 	update()
-
-	
-	camera.position.x = player.position.x;
+	if(player.position.x >= camera.position.x){
+		camera.position.x = player.position.x;
+	}
 	player.velocity.y += gravity
 	player.bounce(platforms)
 	drawSprites()
@@ -46,21 +48,34 @@ function update(){
 	}
 
 	if(keyDown('d')){
-		player.velocity.x += 1;
+		player.velocity.x += playerSpeed;
 	}
 
 	if(keyDown('a')){
-		player.velocity.x -= 1;
+		player.velocity.x -= playerSpeed;
 	}
 
 
 	for(i=0;i<platforms.length;i++){
-		if(platforms[i].position.x < player.position.x - 500){
+		if(platforms[i].position.x < player.position.x - (width/2 + 100)){
 			changePlatform(i)
-			console.log(i)
 		}
 	}
 
+	minDist = player.position.x/50
+	if(minDist < 150){
+		minDist = 150
+	}
+	
+	maxDist = minDist + 100
+
+	if(minDist > 700){
+		minDist = 700
+	}
+
+	if(maxDist > 700){
+		maxDist = 700
+	}
 }
 
 function changePlatform(i){
@@ -69,5 +84,5 @@ function changePlatform(i){
 	platforms[i].height = heightA
 	posX += platDist
 	platforms[i].position.x = posX
-	platforms[i].position.y = 600 - heightA/2
+	platforms[i].position.y = height - heightA/2
 }
