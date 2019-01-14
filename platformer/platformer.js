@@ -17,7 +17,7 @@ function setup(){
 	platforms = new Group
 	player = createSprite(50, 25, 25, 25)
 
-	for(i=0;i<20;i++){
+	for(i=0;i<Math.ceil(width/150);i++){
 		heightA = random(minHeight, maxHeight)
 		posX += platDist
 		platform = createSprite(posX, height - heightA/2, platWidth, heightA)
@@ -66,15 +66,15 @@ function update(){
 	if(minDist < 150){
 		minDist = 150
 	}
-	
+
 	maxDist = minDist + 100
 
 	if(minDist > 700){
 		minDist = 700
 	}
 
-	if(maxDist > 700){
-		maxDist = 700
+	if(maxDist > 800){
+		maxDist = 800
 	}
 }
 
