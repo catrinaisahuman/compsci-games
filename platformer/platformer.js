@@ -12,11 +12,16 @@ maxDist = 250
 minDist = 150
 playerSpeed = 1
 
+obsPosX = 0
+obsDist = 0
+
+
 function setup(){
 	createCanvas(1080, 720);
 	platforms = new Group
 	platEdgesL = new Group
 	platEdgesR = new Group
+	obsticals = new Group
 	player = createSprite(50, 25, 25, 25)
 
 	for(i=0;i<Math.ceil(width/150);i++){
@@ -38,6 +43,16 @@ function setup(){
 		platforms.add(platform)
 		platEdgesL.add(platEdgeL)
 		platEdgesR.add(platEdgeR)
+
+		obsDist = random(500, 1000)
+		obsHeight = random(200, 300)
+		obsPosX += obsDist
+
+		obstical = createSprite(obsPosX, obsHeight, 50, 50)
+		obstical.shapeColor = color(200, 0, 0)
+		obstical.immovable = true
+
+		obsticals.add(obstical)
 	}
 }
 
@@ -61,6 +76,10 @@ function update(){
 		player.velocity.y += 0.01
 	}
 
+	if(player.collide(obsticals)){
+		reset()
+	}
+
 	if(player.velocity.y > maxVel){
 		player.velocity.y = maxVel
 	}
@@ -80,6 +99,12 @@ function update(){
 		}
 	}
 
+	for(i=0;i<obsticals.length;i++){
+		if(obsticals[i].position.x < player.position.x - (width/2 + 100)){
+			changeObsticals(i)
+		}
+	}
+
 	minDist = player.position.x/50
 	if(minDist < 150){
 		minDist = 150
@@ -93,6 +118,10 @@ function update(){
 
 	if(maxDist > 900){
 		maxDist = 900
+	}
+
+	if(player.position.y > 1000){
+		reset()
 	}
 }
 
@@ -115,4 +144,62 @@ function changePlatform(i){
 
 	platforms[i].setCollider('rectangle', 0, -heightA/2 + 5, platWidth, 10)
 
+}
+
+
+function reset(){
+	player.position.x = 50
+	player.position.y = 25
+	player.velocity.x = 0
+	player.velocity.y = 0
+
+	camera.position.x = width/2
+
+	maxDist = 250
+	minDist = 150
+	posX = 50
+	platDist = 0
+	obsPosX = 0
+	obsDist = 0
+
+	for(i=0;i<platforms.length;i++){
+		resetPlatform(i)
+	}
+
+	for(i=0;i<obsticals.length;i++){
+		changeObsticals(i)
+	}
+}
+
+
+function resetPlatform(i){
+	heightA = random(minHeight, maxHeight)
+	platforms[i].height = heightA 
+	platEdgesL[i].height = heightA - 10
+	platEdgesR[i].height = heightA - 10
+
+	posX += platDist
+	platforms[i].position.x = posX
+	platforms[i].position.y = height - heightA/2
+
+	platEdgesL[i].position.x = posX - platWidth/2 +1
+	platEdgesL[i].position.y = height - heightA/2 +10
+
+	platEdgesR[i].position.x = posX + platWidth/2 -1
+	platEdgesR[i].position.y = height - heightA/2 +10
+
+	platforms[i].setCollider('rectangle', 0, -heightA/2 + 5, platWidth, 10)
+
+	platDist = random(minDist, maxDist)
+
+}
+
+
+function changeObsticals(i){
+	obsHeight = random(200, 300)
+	obsDist = random(500, 1000)
+
+	obsPosX += obsDist
+	obsticals[i].position.x = obsPosX
+	obsticals[i].position.y = obsHeight
 }
