@@ -24,6 +24,7 @@ function setup(){
 	obsticals = new Group
 	player = createSprite(50, 25, 25, 25)
 
+
 	for(i=0;i<Math.ceil(width/150);i++){
 		platColor = color(random(0,255),random(0,255),random(0,255))
 		heightA = random(minHeight, maxHeight)
@@ -31,7 +32,7 @@ function setup(){
 
 		platform = createSprite(posX, height - heightA/2, platWidth, heightA)
 		platform.shapeColor = platColor
-		platform.setCollider('rectangle', 0, -heightA/2 + 5, platWidth, 10)
+		platform.setCollider('rectangle', 0, -heightA/2 + 10, platWidth, 20)
 
 		platEdgeL = createSprite(posX - platWidth/2 +1, height - heightA/2 +10, 1, heightA - 10)
 		platEdgeR = createSprite(posX + platWidth/2 -1, height - heightA/2 +10, 1, heightA - 10)
@@ -44,26 +45,38 @@ function setup(){
 		platEdgesL.add(platEdgeL)
 		platEdgesR.add(platEdgeR)
 
-		obsDist = random(500, 1000)
-		obsHeight = random(200, 300)
-		obsPosX += obsDist
+		if(Math.ceil(width/150)%i == 0){
+			obsDist = random(500, 1000)
+			obsHeight = random(200, 300)
+			obsPosX += obsDist
 
-		obstical = createSprite(obsPosX, obsHeight, 50, 50)
-		obstical.shapeColor = color(200, 0, 0)
-		obstical.immovable = true
+			obstical = createSprite(obsPosX, obsHeight, 50, 50)
+			obstical.shapeColor = color(200, 0, 0)
+			obstical.immovable = true
 
-		obsticals.add(obstical)
+			obsticals.add(obstical)
+			console.log(i)
+		}
 	}
 }
 
+
 function draw(){
 	background(220)
+	textAlign(CENTER, BASELINE)
+	textSize(30)
+	text('Distance: '+Math.ceil(player.position.x/50), camera.position.x, 35);
+
+	
 	update()
 	if(player.position.x >= camera.position.x){
 		camera.position.x = player.position.x;
 	}
 	player.velocity.y += gravity
 	player.bounce(platforms)
+
+
+
 	drawSprites()
 }
 
@@ -75,6 +88,7 @@ function update(){
 		player.velocity.x = 0
 		player.velocity.y += 0.01
 	}
+	
 
 	if(player.collide(obsticals)){
 		reset()
@@ -84,13 +98,6 @@ function update(){
 		player.velocity.y = maxVel
 	}
 
-	if(keyDown('d')){
-		player.velocity.x += playerSpeed;
-	}
-
-	if(keyDown('a')){
-		player.velocity.x -= playerSpeed;
-	}
 
 
 	for(i=0;i<platforms.length;i++){
@@ -104,6 +111,14 @@ function update(){
 			changeObsticals(i)
 		}
 	}
+
+	if(keyDown('d') == true){
+      player.velocity.x += playerSpeed;
+    }
+
+    if(keyDown('a')){
+       player.velocity.x -= playerSpeed;
+    }
 
 	minDist = player.position.x/50
 	if(minDist < 150){
@@ -203,3 +218,11 @@ function changeObsticals(i){
 	obsticals[i].position.x = obsPosX
 	obsticals[i].position.y = obsHeight
 }
+
+
+
+
+
+
+
+
