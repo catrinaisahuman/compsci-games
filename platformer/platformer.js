@@ -4,6 +4,7 @@ maxVel = 17
 platDist = 0
 posX = 50.00
 oldPos = 0
+timer = 0
 
 maxHeight = 300
 minHeight = 20
@@ -14,6 +15,10 @@ playerSpeed = 1
 
 obsPosX = 0
 obsDist = 0
+distance = 0
+gameOver = false
+showScore = false
+score = 0
 
 
 function setup(){
@@ -63,9 +68,10 @@ function setup(){
 
 function draw(){
 	background(220)
+	distance = Math.ceil(player.position.x/50)
 	textAlign(CENTER, BASELINE)
 	textSize(30)
-	text('Distance: '+Math.ceil(player.position.x/50), camera.position.x, 35);
+	text('Distance: '+ distance, camera.position.x, 35);
 
 	
 	update()
@@ -91,7 +97,8 @@ function update(){
 	
 
 	if(player.collide(obsticals)){
-		reset()
+		gameOver = true
+		timer = 0
 	}
 
 	if(player.velocity.y > maxVel){
@@ -136,8 +143,21 @@ function update(){
 	}
 
 	if(player.position.y > 1000){
-		reset()
+		gameOver = true
+		timer = 0
 	}
+
+	if(gameOver == true){
+		reset()
+		
+	}
+
+
+	if(showScore == true){
+		textAlign(CENTER, CENTER)
+		textSize(50)
+		text('Score: ' + score, width/2, height/2)
+	} 
 }
 
 function changePlatform(i){
@@ -184,6 +204,11 @@ function reset(){
 	for(i=0;i<obsticals.length;i++){
 		changeObsticals(i)
 	}
+
+	score = distance
+	distance = 0
+	gameOver = false
+	showScore = true
 }
 
 
@@ -218,6 +243,12 @@ function changeObsticals(i){
 	obsticals[i].position.x = obsPosX
 	obsticals[i].position.y = obsHeight
 }
+
+
+
+window.setInterval(function(){
+	timer++
+}, 1000)
 
 
 
