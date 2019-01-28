@@ -21,6 +21,15 @@ showScore = false
 score = 0
 
 
+function preload() {
+	jump = loadSound('audio/jump.wav')
+	jump.setVolume(0.3)
+	backgroundMusic = loadSound('audio/background.wav')
+	backgroundMusic.playMode('untilDone')
+
+}
+
+
 function setup(){
 	createCanvas(1080, 720);
 	platforms = new Group
@@ -28,7 +37,6 @@ function setup(){
 	platEdgesR = new Group
 	obsticals = new Group
 	player = createSprite(50, 25, 25, 25)
-
 
 	for(i=0;i<Math.ceil(width/150);i++){
 		platColor = color(random(0,255),random(0,255),random(0,255))
@@ -39,8 +47,8 @@ function setup(){
 		platform.shapeColor = platColor
 		platform.setCollider('rectangle', 0, -heightA/2 + 10, platWidth, 20)
 
-		platEdgeL = createSprite(posX - platWidth/2 +1, height - heightA/2 +10, 1, heightA - 10)
-		platEdgeR = createSprite(posX + platWidth/2 -1, height - heightA/2 +10, 1, heightA - 10)
+		platEdgeL = createSprite(posX - platWidth/2 +1, height - heightA/2 +5, 1, heightA - 5)
+		platEdgeR = createSprite(posX + platWidth/2 -1, height - heightA/2 +5, 1, heightA - 5)
 		platEdgeL.shapeColor = platColor
 		platEdgeR.shapeColor = platColor
 
@@ -60,7 +68,6 @@ function setup(){
 			obstical.immovable = true
 
 			obsticals.add(obstical)
-			console.log(i)
 		}
 	}
 }
@@ -88,6 +95,7 @@ function draw(){
 
 
 function update(){
+	backgroundMusic.play()
 	player.velocity.x = player.velocity.x * friction
 
 	if(player.collide(platEdgesL) == true || player.collide(platEdgesR) == true){
@@ -95,6 +103,11 @@ function update(){
 		player.velocity.y += 0.01
 	}
 	
+
+	if(player.collide(platforms)){
+		player.velocity.y = -player.velocity.y -gravity
+		jump.play()
+	}
 
 	if(player.collide(obsticals)){
 		gameOver = true
@@ -177,7 +190,7 @@ function changePlatform(i){
 	platEdgesR[i].position.x = posX + platWidth/2 -1
 	platEdgesR[i].position.y = height - heightA/2 +10
 
-	platforms[i].setCollider('rectangle', 0, -heightA/2 + 5, platWidth, 10)
+	platforms[i].setCollider('rectangle', 0, -heightA/2 + 10, platWidth, 20)
 
 }
 
