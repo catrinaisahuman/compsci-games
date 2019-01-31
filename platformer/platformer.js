@@ -24,9 +24,10 @@ score = 0
 function preload() {
 	jump = loadSound('audio/jump.wav')
 	jump.setVolume(0.3)
+	jump.playMode('untilDone')
 	backgroundMusic = loadSound('audio/background.wav')
 	backgroundMusic.playMode('untilDone')
-
+	playerSprite = loadImage('ball.png')
 }
 
 
@@ -37,6 +38,7 @@ function setup(){
 	platEdgesR = new Group
 	obsticals = new Group
 	player = createSprite(50, 25, 25, 25)
+	player.addImage(playerSprite)
 
 	for(i=0;i<Math.ceil(width/150);i++){
 		platColor = color(random(0,255),random(0,255),random(0,255))
@@ -45,18 +47,10 @@ function setup(){
 
 		platform = createSprite(posX, height - heightA/2, platWidth, heightA)
 		platform.shapeColor = platColor
-		platform.setCollider('rectangle', 0, -heightA/2 + 10, platWidth, 20)
-
-		platEdgeL = createSprite(posX - platWidth/2 +1, height - heightA/2 +5, 1, heightA - 5)
-		platEdgeR = createSprite(posX + platWidth/2 -1, height - heightA/2 +5, 1, heightA - 5)
-		platEdgeL.shapeColor = platColor
-		platEdgeR.shapeColor = platColor
 
 		platDist = random(minDist, maxDist)
 		platform.immovable = true
 		platforms.add(platform)
-		platEdgesL.add(platEdgeL)
-		platEdgesR.add(platEdgeR)
 
 		if(Math.ceil(width/150)%i == 0){
 			obsDist = random(500, 1000)
@@ -75,6 +69,7 @@ function setup(){
 
 function draw(){
 	background(220)
+
 	distance = Math.ceil(player.position.x/50)
 	textAlign(CENTER, BASELINE)
 	textSize(30)
@@ -86,7 +81,6 @@ function draw(){
 		camera.position.x = player.position.x;
 	}
 	player.velocity.y += gravity
-	player.bounce(platforms)
 
 
 
@@ -97,18 +91,19 @@ function draw(){
 function update(){
 	backgroundMusic.play()
 	player.velocity.x = player.velocity.x * friction
+	
+	for(i=0;i<platforms.length;i++){
+		if(player.collide(platforms[i])){
+			if(player.position.y <= platforms[i].position.y - platforms[i].height/2){
+				player.velocity.y = -abs(player.velocity.y) -gravity
+				jump.play()
+			} else{
+				player.velocity.x = 0
+			} 
+		}
 
-	if(player.collide(platEdgesL) == true || player.collide(platEdgesR) == true){
-		player.velocity.x = 0
-		player.velocity.y += 0.01
 	}
 	
-
-	if(player.collide(platforms)){
-		player.velocity.y = -player.velocity.y -gravity
-		jump.play()
-	}
-
 	if(player.collide(obsticals)){
 		gameOver = true
 		timer = 0
@@ -177,21 +172,10 @@ function changePlatform(i){
 	heightA = random(minHeight, maxHeight)
 	platDist = random(minDist, maxDist)
 	platforms[i].height = heightA 
-	platEdgesL[i].height = heightA - 10
-	platEdgesR[i].height = heightA - 10
 
 	posX += platDist
 	platforms[i].position.x = posX
 	platforms[i].position.y = height - heightA/2
-
-	platEdgesL[i].position.x = posX - platWidth/2 +1
-	platEdgesL[i].position.y = height - heightA/2 +10
-
-	platEdgesR[i].position.x = posX + platWidth/2 -1
-	platEdgesR[i].position.y = height - heightA/2 +10
-
-	platforms[i].setCollider('rectangle', 0, -heightA/2 + 10, platWidth, 20)
-
 }
 
 
@@ -228,20 +212,11 @@ function reset(){
 function resetPlatform(i){
 	heightA = random(minHeight, maxHeight)
 	platforms[i].height = heightA 
-	platEdgesL[i].height = heightA - 10
-	platEdgesR[i].height = heightA - 10
+
 
 	posX += platDist
 	platforms[i].position.x = posX
 	platforms[i].position.y = height - heightA/2
-
-	platEdgesL[i].position.x = posX - platWidth/2 +1
-	platEdgesL[i].position.y = height - heightA/2 +10
-
-	platEdgesR[i].position.x = posX + platWidth/2 -1
-	platEdgesR[i].position.y = height - heightA/2 +10
-
-	platforms[i].setCollider('rectangle', 0, -heightA/2 + 5, platWidth, 10)
 
 	platDist = random(minDist, maxDist)
 
