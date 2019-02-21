@@ -741,7 +741,7 @@ deltaTime = ((now - then) / 1000)/INTERVAL_60; // seconds since last frame
 //                       collider until an image or new collider are set
 // @param {Number} height Height of the placeholder rectangle and of the
 //                        collider until an image or new collider are set
-function Sprite(pInst, _x, _y, _w, _h) {
+function Sprite(pInst, _x, _y, _w, _h, _health = 3) {
   var pInstBind = createPInstBinder(pInst);
 
   var createVector = pInstBind('createVector');
@@ -786,6 +786,7 @@ function Sprite(pInst, _x, _y, _w, _h) {
   * @property position
   * @type {p5.Vector}
   */
+  this.health = _health
   this.position = createVector(_x, _y);
 
   /**

@@ -2,20 +2,26 @@ var grid = []
 resolution = 20
 maxVel = 17
 enemyMaxVel = 1
+timer = 0
+attackTimer = 4
+attackActive = false
+spawnTime = 0
+levelSelect = 0
 
 function setup(){
 	createCanvas(720, 720)
 	walls = new Group()
 	enemies = new Group()
-	player = createSprite(500, 500, 20, 20)
+	attack = new Group()
+	player = createSprite(500, 500, 30, 30)
 
-	nWall = createSprite(width/2, 10, width, 20)
+	nWall = createSprite(width/2, 5, width, 30)
 	nWall.shapeColor = color(0)
-	sWall = createSprite(width/2, height -10, width, 20)
+	sWall = createSprite(width/2, height -5, width, 30)
 	sWall.shapeColor = color(0)
-	eWall = createSprite(10, height/2, 20, width)
+	eWall = createSprite(5, height/2, 30, width)
 	eWall.shapeColor = color(0)
-	wWall = createSprite(width -10, height/2, 20, height)
+	wWall = createSprite(width -5, height/2, 30, height)
 	wWall.shapeColor = color(0)
 
 	walls.add(nWall)
@@ -31,22 +37,44 @@ function setup(){
 		}
 	}
 
-
-	for(i=0;i<resolution;i++){
-		for(z=0;z<resolution;z++){
-			if(z==10 && i<8){
-				grid[i][z] = 1
-			}
-
-			if(i==7 && z<11 && z!=7 && z!=8){
-				grid[i][z] = 1
-			}
-
-			if(z==10 && i>12){
-				grid[i][z] = 1
-			}
-		}
+	//one
+	levelSelect = int(random(1,3))
+ 	if(levelSelect == 1){
+	 	oneOne()
 	}
+
+	if(levelSelect == 2){
+		oneTwo()
+	}
+	//two
+	levelSelect = int(random(1,3))
+
+
+	if(levelSelect == 2){
+		twoOne()
+	}
+	//three
+	levelSelect = int(random(1,4))
+	if(levelSelect == 1){
+		threeOne()
+	}
+
+	if(levelSelect == 2){
+		threeTwo()
+	}
+
+	//four
+	levelSelect = int(random(1,4))
+	if(levelSelect == 1){
+		fourOne()
+	}
+
+	if(levelSelect == 2){
+		fourTwo()
+	}
+
+
+
 
 	for(i=0;i<resolution;i++){
 		for(z=0;z<resolution;z++){
@@ -58,52 +86,53 @@ function setup(){
 		}
 	}
 
-	for(i=0;i<10;i++){
-		spawnEnemy(50, 50, 1)
-	}
+	 for(i=0;i<10;i++){
+	 	spawnEnemy(50, 50, 1)
+	 }
 
 }
 
 function draw(){
 	background(220)
 
-	model.playerVelX *= 0.9
-	model.playerVelY *= 0.9
+	player.velocity.x *= 0.9
+	player.velocity.y *= 0.9
 	
-	player.velocity.x = model.playerVelX
-	player.velocity.y = model.playerVelY
-
 
 	if(keyDown('d') == true){
-      model.playerVelX += 1;
+      player.velocity.x += 1;
     }
 
     if(keyDown('a')){
-       model.playerVelX -= 1;
+       player.velocity.x -= 1;
     }
 
    	if(keyDown('w') == true){
-      model.playerVelY -= 1;
+       player.velocity.y -= 1;
     }
 
     if(keyDown('s')){
-       model.playerVelY += 1;
+       player.velocity.y += 1;
     }
 
-    if(model.playerVelX > maxVel){
-    	model.playerVelX = maxVel
+    if(keyDown('space') == true && attackTimer > 1){
+    	attackActivate()
     }
 
-     if(model.playerVelY > maxVel){
-    	model.playerVelY = maxVel
+    if(player.velocity.x > maxVel){
+    	player.velocity.x = maxVel
     }
 
-    if(model.playerVelX < -maxVel){
-    	model.playerVelX = -maxVel
+     if(player.velocity.y > maxVel){
+    	player.velocity.y = maxVel
     }
 
-     if(model.playerVelY < -maxVel){
-    	model.playerVelY = -maxVel
+    if(player.velocity.x < -maxVel){
+    	player.velocity.x = -maxVel
+    }
+
+     if(player.velocity.y < -maxVel){
+    	player.velocity.y = -maxVel
     }
 
     for(i=0;i<enemies.length;i++){
@@ -128,14 +157,58 @@ function draw(){
 
 
     for(j=0;j<enemies.length;j++){
-    	applyForce(enemies[j], seek(player.position, enemies[j].position, enemies[j].velocity))
+    	if(p5.Vector.dist(enemies[j].position, player.position) > 20){
+    		applyForce(enemies[j], seek(player.position, enemies[j].position, enemies[j].velocity))
+    	} 
     	for(x=0;x<enemies.length;x++){
     		enemies[j].bounce(enemies[x])
     	}
     	collision(enemies[j])
+
+    	if(player.collide(enemies[j]) == true && model.invulernable == false){
+			model.health -= 1
+			console.log(model.health)
+			model.invulernable = true
+			timer = 0
+			knockback(player, enemies[j])
+		}
+	}
+
+	for(j=0;j<enemies.length;j++){
+		if(attackActive == true ){
+			for(z=0;z<attack.length;z++){
+				if(enemies[j].collide(attack[z])){
+					enemies[j].health -= 1
+			 		attack[z].remove()
+			 		break;
+				}
+				
+			}
+		}
+		if(enemies[j].health == 0){
+			enemies[j].remove()
+		}
+	}
+	if(timer == 1){
+		model.invulernable = false
+	}
+
+	if(attackActive == true){
+		for(i=0;i<attack.length;i++){
+			if(attack[i].collide(walls) == true){
+				attack[i].remove()
+			}
+		}
 	}
 
 	drawSprites()
+
+	if(model.health <= 0){
+		gameOver()
+	}
+
+	text('Health '+model.health, 0, 0)
+
 }
 
 
@@ -158,20 +231,68 @@ function collision(sprite){
 		}
 
 	}
+
+	if(sprite.position.x > width){
+		sprite.velocity.x -= 1
+	}
+	if(sprite.position.x < 0){
+		sprite.velocity.x += 1
+	}
+	if(sprite.position.y > height){
+		sprite.velocity.y -= 1
+	}
+	if(sprite.position.y < 0){
+		sprite.velocity.x += 1
+	}
 }
 
 function spawnEnemy(posX, posY, type){
-	enemy = createSprite(posX, posY, 20, 20)
+	enemy = createSprite(posX, posY, 20, 20, 4)
 	enemies.add(enemy)
 }
 
- function seek(target, seekerPos, seekerVel){
+function seek(target, seekerPos, seekerVel){
   	targetDir = p5.Vector.sub(target, seekerPos);
     steeringForce = p5.Vector.sub(targetDir, seekerVel).normalize();
     return steeringForce;
-  }
+}
 
-  function applyForce(sprite, steeringForce){
+function applyForce(sprite, steeringForce){
   	sprite.velocity.x += steeringForce.x
   	sprite.velocity.y += steeringForce.y
-  }
+}
+
+function knockback(sprite, source){
+	if(player.collide(walls) == false){
+		applyForce(sprite, (p5.Vector.sub(sprite.position, source.position)).mult(0.5))
+		//player.velocity.x -= (sprite.position.x - player.position.x)*50
+		//player.velocity.y -= (sprite.position.y - player.position.y)*50
+	}
+
+}
+
+
+function attackActivate(){
+	sword = createSprite(player.position.x, player.position.y, 15, 15)
+	attack.add(sword)
+	sword.velocity.y = -4
+	attackActive = true
+	attackTimer = 0
+}
+
+
+function gameOver(){
+	textSize(70)
+	textAlign(CENTER, CENTER)
+	text('Game Over', width/2, height/2)
+}
+
+window.setInterval(function(){
+	timer++
+	spawnEnemy(50, 50, 1)
+}, 1000)
+
+window.setInterval(function(){
+	attackTimer++
+}, 100)
+
