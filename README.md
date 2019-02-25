@@ -6,10 +6,4 @@ Games made in computer science
 * [platformer](https://catrinaisahuman.github.io/compsci-games/platformer)
 * [dungeon crawler](https://catrinaisahuman.github.io/compsci-games/dungeonCrawler)
 
-1. foo
-2. bar
-
-__bold__  
-_italic_
-
 
