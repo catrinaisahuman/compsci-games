@@ -12,7 +12,7 @@ function up(){
 
 function buy(){
 	count -= price
-	price += 2
+	price += Math.round(price/4)
 	testers++
 	autoTester = true
 }
