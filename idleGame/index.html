@@ -2,7 +2,6 @@
     <script src="p5.min.js"></script>
     <script src="p5.dom.min.js"></script>
     <script src="p5.sound.min.js"></script>
-    <script src="require.js"></script>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
@@ -13,10 +12,18 @@
     <p id="testerCount"></p>
     <button onclick="up()">test</button>
     <button class="inline" id="tester" onclick="buy()", disabled="true">auto tester</button>
-		<p class="inline" id="price">0</div>
+		<p class="inline" id="price">0
     <div></div>
     <button class="inline" id="improve" onclick="improve()", disabled="true">improve testers</button>
     <p class="inline" id="improvePrice"></p>
+
+
+    <div id="wheel">
+      <script src="wheel.js"></script>
+      <button disabled="true" class="inline" id="spin" onclick="spin()">spin the wheel</button>
+      <p class="inline" id="spinPrice">50 tests</p>
+    </div>
+
 
     <script src="idleGame.js"></script>
   </body>

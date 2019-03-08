@@ -5,6 +5,11 @@ testers = 0
 testerRate = 1
 autoTester = false
 upgradeLevel = 1000
+spinPrice = 50
+spinnerAct = false
+document.getElementById('wheel').style.display = "none"
+
+
 
 function up(){
 	count++
@@ -25,6 +30,10 @@ function improve(){
 
 function update(){
 	tps = testers * testerRate
+
+	if(testers < 0){
+		testers = 0
+	}
 	document.getElementById("count").innerHTML = Math.round(count)
 	document.getElementById("price").innerHTML = price + " tests" 
 	document.getElementById("improvePrice").innerHTML = upgradeLevel + " tests"
@@ -37,6 +46,17 @@ function update(){
 
 	if(testers == 1){
 		document.getElementById("testerCount").innerHTML = testers+" tester"
+	}
+
+	if(count >= spinPrice){
+		document.getElementById('spin').disabled = false
+		if(spinnerAct == false){
+			document.getElementById('wheel').style.display = "block"
+			start()
+			spinnerAct = true
+		}
+	} else {
+		document.getElementById('spin').disabled = true
 	}
 
 	if(count >= upgradeLevel){
