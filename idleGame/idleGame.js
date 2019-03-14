@@ -53,6 +53,7 @@ function update(){
 		if(spinnerAct == false){
 			document.getElementById('wheel').style.display = "block"
 			start()
+			console.log('yes')
 			spinnerAct = true
 		}
 	} else {
