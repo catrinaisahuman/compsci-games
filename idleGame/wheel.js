@@ -2,7 +2,6 @@ rotation = 0
 spinning = false
 timer = 0
 length = 0
-
 function preload(){
 	spinner = loadImage("spinner.png")
 }
